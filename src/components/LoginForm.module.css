@@ -1,0 +1,47 @@
+.formWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: #fff;
+  background-color: #333;
+  text-align: center;
+  padding: 3rem 4rem;
+  border-radius: 1rem;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formHeading {
+  color: #fff;
+  font-size: 3rem;
+  text-align: center;
+  margin: 0;
+}
+
+.formInfo {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.register {
+  margin: 0;
+  align-self: flex-end;
+  font-size: 1.2rem;
+}
+
+.loginForm input {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+}

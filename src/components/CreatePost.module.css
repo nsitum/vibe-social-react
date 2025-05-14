@@ -1,0 +1,69 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #181818;
+  padding: 3rem 2rem 2rem 2rem;
+  border-radius: 1rem;
+}
+
+.postInput {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.form img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+}
+
+.form input {
+  width: 100%;
+  max-width: 62rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  border: 2px solid #333;
+  resize: none;
+  font-family: inherit;
+  font-size: 2rem;
+  padding: 0 2rem;
+  overflow: hidden;
+  background-color: #181818;
+  color: #fff;
+}
+
+.postActions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.postActions ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.postActions ul li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.8rem;
+  color: #777;
+}
+
+.CreatePostBtn {
+  font-family: inherit;
+  padding: 1rem 2rem;
+  background-color: #777;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 1rem;
+  font-size: 1.3rem;
+}
