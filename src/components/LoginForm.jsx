@@ -55,7 +55,6 @@ function LoginForm() {
       });
       if (formErrors.length) {
         setFormErrors(formErrors);
-        console.log(formErrors);
         return;
       }
 
@@ -87,11 +86,12 @@ function LoginForm() {
 
     if (currentAction === "register") {
       try {
-        await handleRegister({
+        const user = await handleRegister({
           email,
           username,
           password,
         });
+        if (!user) return;
         navigate("/homepage");
       } catch (err) {
         console.error(err);
@@ -125,6 +125,7 @@ function LoginForm() {
             confirmPassword={confirmPassword}
             setConfirmPassword={setConfirmPassword}
             onCurrentAction={setCurrentAction}
+            formErrors={formErrors}
           />
         )}
         <Button>

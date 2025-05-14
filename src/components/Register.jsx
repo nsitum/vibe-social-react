@@ -11,38 +11,68 @@ function Register({
   confirmPassword,
   setConfirmPassword,
   onCurrentAction,
+  formErrors,
 }) {
   function handleActionChange() {
     onCurrentAction("login");
   }
 
+  const usernameError = formErrors.find((err) => err.field === "username");
+  const emailError = formErrors.find((err) => err.field === "email");
+  const passwordError = formErrors.find((err) => err.field === "password");
+
   return (
     <>
       <div className={styles.formInput}>
-        <input
-          type="text"
-          value={username}
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="email"
-          value={email}
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          value={password}
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          value={confirmPassword}
-          placeholder="Confirm password"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <div>
+          <input
+            type="text"
+            value={username}
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <p className={styles.error}>
+            {
+              usernameError
+                ? usernameError.message
+                : "\u00A0" /* &nbsp; fallback */
+            }
+          </p>
+        </div>
+        <div>
+          <input
+            type="email"
+            value={email}
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <p className={styles.error}>
+            {emailError ? emailError.message : "\u00A0" /* &nbsp; fallback */}
+          </p>
+        </div>
+        <div>
+          <input
+            type="password"
+            value={password}
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <p className={styles.error}>
+            {
+              passwordError
+                ? passwordError.message
+                : "\u00A0" /* &nbsp; fallback */
+            }
+          </p>
+        </div>
+        <div>
+          <input
+            type="password"
+            value={confirmPassword}
+            placeholder="Confirm password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
         <p className={styles.register}>
           You don't have an account?{" "}
           <Link to={"/login"} onClick={handleActionChange}>
