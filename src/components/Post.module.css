@@ -2,6 +2,7 @@
   background-color: #181818;
   padding: 1.5rem;
   border-radius: 1rem;
+  position: relative;
 }
 
 .post img {
@@ -54,4 +55,39 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+}
+
+.postMenu {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  cursor: pointer;
+}
+
+.menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 15rem;
+  background-color: #333;
+  list-style: none;
+  padding: 0.8rem;
+  transition: 0.3s all ease;
+  /* pointer-events: none; */
+  font-size: 1.8rem;
+}
+
+.menu li:hover {
+  color: #4a90e2;
+  cursor: pointer;
+}
+
+.comments {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 2rem 1rem;
+  border-top: 1px solid #777;
 }

@@ -1,0 +1,11 @@
+.comment {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.commentAuthor {
+  font-weight: 700;
+}
