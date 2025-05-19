@@ -1,31 +1,35 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import Post from "./Post";
 import styles from "./PostList.module.css";
-// import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
-import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
+
+const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
 function PostList() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(
+    function () {
+      async function getPosts() {
+        try {
+          const res = await fetch(BASE_URL + "/posts");
+          const data = await res.json();
+          setPosts(data);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      getPosts();
+    },
+    [setPosts]
+  );
+
   return (
     <div className={styles.postList}>
-      <div className={styles.post}>
-        <div className={styles.postInfo}>
-          <img src="profile-photo.jpg" alt="" />
-          <div className={styles.postUserAndDate}>
-            <span className={styles.postUser}>nsitum</span>
-            <span className={styles.postDate}>11. 05. 2025. u 20:13</span>
-          </div>
-        </div>
-        <p className={styles.postContent}>Pozdrav svima, ovo je novi post</p>
-        <ul className={styles.postActions}>
-          <li>
-            <FontAwesomeIcon icon={faHeart} />
-            <span className={styles.likeCount}>1</span>
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faComment} />
-            <span className={styles.commentCount}>1</span>
-          </li>
-        </ul>
-      </div>
+      {[...posts]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .map((post) => (
+          <Post post={post} key={post.id} />
+        ))}
     </div>
   );
 }

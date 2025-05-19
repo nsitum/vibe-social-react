@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router";
 
-function AccountInfo() {
+function AccountInfo({ user }) {
   function handleLogout() {
     localStorage.removeItem("user");
   }
@@ -15,8 +15,8 @@ function AccountInfo() {
         <h1>Vibe</h1>
       </div>
       <div className={styles.profileInfo}>
-        <img src="profile-photo.jpg" alt="Profile picture" />
-        <p className={styles.username}>nsitum</p>
+        <img src={user.pictureUrl} alt="Profile picture" />
+        <p className={styles.username}>{user.username}</p>
       </div>
       <ul className={styles.profileActions}>
         <li>

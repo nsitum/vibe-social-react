@@ -2,10 +2,10 @@ import styles from "./Posts.module.css";
 import CreatePost from "./CreatePost";
 import PostList from "./PostList";
 
-function Posts() {
+function Posts({ user }) {
   return (
     <div className={styles.posts}>
-      <CreatePost />
+      <CreatePost user={user} />
       <PostList />
     </div>
   );

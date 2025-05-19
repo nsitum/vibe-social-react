@@ -1,0 +1,57 @@
+.post {
+  background-color: #181818;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
+.post img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+}
+
+.postInfo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.postUserAndDate {
+  display: flex;
+  flex-direction: column;
+}
+
+.postUser {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.postDate {
+  color: #777;
+  font-size: 1.3rem;
+}
+
+.postContent {
+  line-height: 1.4;
+  margin-top: 1rem;
+  padding: 1rem 0;
+}
+
+.postActions {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  gap: 2rem;
+  align-items: center;
+  border-top: 1px solid #777;
+  padding: 1rem;
+}
+
+.postActions li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}

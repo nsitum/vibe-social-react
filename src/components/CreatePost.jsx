@@ -7,11 +7,11 @@ import {
   faPhotoFilm,
 } from "@fortawesome/free-solid-svg-icons";
 
-function CreatePost() {
+function CreatePost({ user }) {
   return (
     <form className={styles.form}>
       <div className={styles.postInput}>
-        <img src="profile-photo.jpg" alt="" />
+        <img src={user.pictureUrl} alt="" />
         <input type="text" placeholder="Write post..." />
       </div>
       <div className={styles.postActions}>
