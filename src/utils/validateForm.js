@@ -1,16 +1,15 @@
-function validateLogin({ username, email, password }) {
+function validateLogin({ username, password }) {
   const errors = [];
 
-  if (!username && !email) {
-    errors.push("Username or email is required.");
-  }
-
-  if (email && !/.+@.+\..+/.test(email)) {
-    errors.push("Email format is invalid.");
+  if (!username) {
+    errors.push({
+      field: "username",
+      message: "Username is required.",
+    });
   }
 
   if (!password) {
-    errors.push("Password is required.");
+    errors.push({ field: "password", message: "Password is required." });
   }
 
   return errors;
@@ -35,7 +34,8 @@ function validateRegister({
     errors.push({ field: "username", message: "Username already exists." });
   }
 
-  if (!email.trim()) errors.push("Email is required.");
+  if (!email.trim())
+    errors.push({ field: "email", message: "Email is required." });
   else if (!/.+@.+\..+/.test(email))
     errors.push({ field: "email", message: "Email format is invalid." });
   else if (existingUsers?.some((u) => u.email === email)) {

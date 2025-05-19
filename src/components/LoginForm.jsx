@@ -46,6 +46,7 @@ function LoginForm() {
 
   async function handleRegister(user) {
     try {
+      setFormErrors([]);
       const formErrors = validateRegister({
         username,
         email,
@@ -72,15 +73,28 @@ function LoginForm() {
     }
   }
 
+  function handleLogin() {
+    setFormErrors([]);
+    const formErrors = validateLogin({ username, password });
+    if (formErrors.length) {
+      setFormErrors(formErrors);
+      return;
+    }
+
+    const foundUser = users.find(
+      (user) => user.username === username && user.password === password
+    );
+
+    return foundUser;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (currentAction === "login") {
-      const foundUser = users.find(
-        (user) => user.username === username && user.password === password
-      );
-      if (!foundUser) return;
-      localStorage.setItem("user", JSON.stringify(foundUser.id));
+      const user = handleLogin();
+      if (!user) return;
+      localStorage.setItem("user", JSON.stringify(user.id));
       navigate("/homepage");
     }
 
@@ -92,6 +106,7 @@ function LoginForm() {
           password,
         });
         if (!user) return;
+        localStorage.setItem("user", JSON.stringify(user.id));
         navigate("/homepage");
       } catch (err) {
         console.error(err);
@@ -113,6 +128,7 @@ function LoginForm() {
             password={password}
             setPassword={setPassword}
             onCurrentAction={setCurrentAction}
+            formErrors={formErrors}
           />
         ) : (
           <Register
