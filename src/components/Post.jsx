@@ -7,6 +7,7 @@ import {
 import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useState } from "react";
 import Comment from "./Comment";
+import { motion } from "framer-motion";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
@@ -17,12 +18,13 @@ function Post({ post, user, comments }) {
   const [isLiking, setIsLiking] = useState(false);
   const heartIcon = isLiked ? faHeartSolid : faHeart;
 
+  const { div: MotionDiv } = motion;
+
   const postComments = comments.filter(
     (comment) => comment.post_id === post.id
   );
 
   const date = new Date(post.created_at).toLocaleString().slice(0, -3);
-  console.log(user.postsLiked);
   const likePayload = isLiked
     ? user.postsLiked.filter((id) => id !== post.id)
     : [...user.postsLiked, post.id];
@@ -31,7 +33,6 @@ function Post({ post, user, comments }) {
     try {
       setLikes((likes) => (isLiked ? likes - 1 : likes + 1));
       setIsLiked((liked) => !liked);
-      console.log(isLiked);
       await fetch(BASE_URL + `/posts/${post.id}`, {
         method: "PUT",
         headers: {
@@ -53,7 +54,12 @@ function Post({ post, user, comments }) {
   }
 
   return (
-    <div className={styles.post}>
+    <MotionDiv
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={styles.post}
+    >
       <div className={styles.postInfo}>
         <img src={post.profilePicture} alt="Profile picture" />
         <div className={styles.postUserAndDate}>
@@ -64,7 +70,9 @@ function Post({ post, user, comments }) {
       <p className={styles.postContent}>{post.content}</p>
       <ul className={styles.postActions}>
         <li>
-          <button
+          <motion.button
+            whileTap={{ scale: 1.2 }}
+            transition={{ type: "spring", stiffness: 300 }}
             className={styles.likeBtn}
             disabled={isLiking}
             onClick={async () => {
@@ -75,11 +83,11 @@ function Post({ post, user, comments }) {
           >
             <FontAwesomeIcon icon={heartIcon} />
             <span className={styles.likeCount}>{likes}</span>
-          </button>
+          </motion.button>
         </li>
         <li>
           <FontAwesomeIcon icon={faComment} />
-          <span className={styles.commentCount}>{post.comments.length}</span>
+          <span className={styles.commentCount}>{post.comments?.length}</span>
         </li>
       </ul>
       <div
@@ -102,7 +110,7 @@ function Post({ post, user, comments }) {
           ))}
         </ul>
       )}
-    </div>
+    </MotionDiv>
   );
 }
 
