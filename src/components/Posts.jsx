@@ -6,7 +6,7 @@ function Posts({ user }) {
   return (
     <div className={styles.posts}>
       <CreatePost user={user} />
-      <PostList />
+      <PostList user={user} />
     </div>
   );
 }

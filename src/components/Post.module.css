@@ -91,3 +91,11 @@
   padding: 2rem 1rem;
   border-top: 1px solid #777;
 }
+
+.likeBtn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* ako koristiš spacing kao prije */
+  cursor: pointer;
+}

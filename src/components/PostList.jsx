@@ -5,7 +5,7 @@ import styles from "./PostList.module.css";
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 const BASE_COMMENT_URL = "https://67de8fa8471aaaa74284e035.mockapi.io";
 
-function PostList() {
+function PostList({ user }) {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
 
@@ -36,12 +36,14 @@ function PostList() {
     getComments();
   }, []);
 
+  if (!user?.postsLiked) return null;
+
   return (
     <div className={styles.postList}>
       {[...posts]
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((post) => (
-          <Post post={post} comments={comments} key={post.id} />
+          <Post post={post} user={user} comments={comments} key={post.id} />
         ))}
     </div>
   );
