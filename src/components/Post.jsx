@@ -8,14 +8,18 @@ import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useState } from "react";
 import Comment from "./Comment";
 import { motion } from "framer-motion";
+import Button from "./Button";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
-function Post({ post, user, comments }) {
+function Post({ post, user, comments, onEditPost }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [likes, setLikes] = useState(post.likes);
   const [isLiked, setIsLiked] = useState(user.postsLiked?.includes(post.id));
   const [isLiking, setIsLiking] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
+
   const heartIcon = isLiked ? faHeartSolid : faHeart;
 
   const { div: MotionDiv } = motion;
@@ -53,6 +57,25 @@ function Post({ post, user, comments }) {
     }
   }
 
+  async function handleEditPost(e) {
+    e.preventDefault();
+    try {
+      if (!editContent) throw new Error("Post can't be empty!");
+      const res = await fetch(BASE_URL + `/posts/${post.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: editContent }),
+      });
+      const data = await res.json();
+      setIsEditing(false);
+      onEditPost(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <MotionDiv
       initial={{ opacity: 0, y: -20 }}
@@ -67,7 +90,19 @@ function Post({ post, user, comments }) {
           <span className={styles.postDate}>{date}</span>
         </div>
       </div>
-      <p className={styles.postContent}>{post.content}</p>
+      {isEditing ? (
+        <form onSubmit={handleEditPost}>
+          <input
+            type="text"
+            className={styles.editInput}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+          />
+          <Button className={styles.editPostBtn}>Edit</Button>
+        </form>
+      ) : (
+        <p className={styles.postContent}>{post.content}</p>
+      )}
       <ul className={styles.postActions}>
         <li>
           <motion.button
@@ -90,18 +125,20 @@ function Post({ post, user, comments }) {
           <span className={styles.commentCount}>{post.comments?.length}</span>
         </li>
       </ul>
-      <div
-        className={styles.postMenu}
-        onClick={() => setShowPostMenu((showMenu) => !showMenu)}
-      >
-        <FontAwesomeIcon icon={faEllipsis} />
-        {showPostMenu && (
-          <ul className={styles.menu}>
-            <li>Edit post</li>
-            <li>Delete post</li>
-          </ul>
-        )}
-      </div>
+      {user.id === post.user_id && (
+        <div
+          className={styles.postMenu}
+          onClick={() => setShowPostMenu((showMenu) => !showMenu)}
+        >
+          <FontAwesomeIcon icon={faEllipsis} />
+          {showPostMenu && (
+            <ul className={styles.menu}>
+              <li onClick={() => setIsEditing(true)}>Edit post</li>
+              <li>Delete post</li>
+            </ul>
+          )}
+        </div>
+      )}
 
       {!!postComments.length && (
         <ul className={styles.comments}>

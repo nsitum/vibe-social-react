@@ -99,3 +99,36 @@
   gap: 0.5rem; /* ako koristiš spacing kao prije */
   cursor: pointer;
 }
+
+.post form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editInput {
+  width: 100%;
+  max-width: 62rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  border: 2px solid #333;
+  resize: none;
+  font-family: inherit;
+  font-size: 2rem;
+  padding: 0 2rem;
+  margin: 1rem;
+  overflow: hidden;
+  background-color: #181818;
+  color: #fff;
+}
+
+.editPostBtn {
+  font-family: inherit;
+  height: 5rem;
+  background-color: #777;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 1rem;
+  font-size: 1.3rem;
+}

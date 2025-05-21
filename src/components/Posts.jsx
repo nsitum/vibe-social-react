@@ -14,6 +14,12 @@ function Posts({ user }) {
     setPosts((prev) => [newPost, ...prev]);
   }
 
+  function handleEditPost(editedPost) {
+    setPosts((prev) =>
+      prev.map((post) => (post.id === editedPost.id ? editedPost : post))
+    );
+  }
+
   useEffect(function () {
     async function getPosts() {
       try {
@@ -42,7 +48,12 @@ function Posts({ user }) {
   return (
     <div className={styles.posts}>
       <CreatePost user={user} onAddPost={handleAddPost} />
-      <PostList user={user} posts={posts} comments={comments} />
+      <PostList
+        user={user}
+        posts={posts}
+        comments={comments}
+        onEditPost={handleEditPost}
+      />
     </div>
   );
 }

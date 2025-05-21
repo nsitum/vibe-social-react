@@ -1,7 +1,7 @@
 import Post from "./Post";
 import styles from "./PostList.module.css";
 
-function PostList({ user, posts, comments }) {
+function PostList({ user, posts, comments, onEditPost }) {
   if (!user?.postsLiked) return null;
 
   return (
@@ -9,7 +9,13 @@ function PostList({ user, posts, comments }) {
       {[...posts]
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((post) => (
-          <Post post={post} user={user} comments={comments} key={post.id} />
+          <Post
+            post={post}
+            user={user}
+            comments={comments}
+            onEditPost={onEditPost}
+            key={post.id}
+          />
         ))}
     </div>
   );
