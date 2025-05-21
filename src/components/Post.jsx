@@ -5,20 +5,35 @@ import {
   faHeart as faHeartSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Comment from "./Comment";
 import { motion } from "framer-motion";
 import Button from "./Button";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
-function Post({ post, user, comments, onEditPost }) {
+function Post({ post, user, comments, onEditPost, onDeletePost }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [likes, setLikes] = useState(post.likes);
   const [isLiked, setIsLiked] = useState(user.postsLiked?.includes(post.id));
   const [isLiking, setIsLiking] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
+
+  const menuRef = useRef();
+
+  useEffect(function () {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowPostMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const heartIcon = isLiked ? faHeartSolid : faHeart;
 
@@ -71,6 +86,22 @@ function Post({ post, user, comments, onEditPost }) {
       const data = await res.json();
       setIsEditing(false);
       onEditPost(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleDeletePost() {
+    try {
+      const confirmation = confirm("Are you sure you want to delete the post?");
+      if (!confirmation) return;
+
+      const res = await fetch(BASE_URL + `/posts/${post.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      onDeletePost(data);
     } catch (err) {
       console.error(err);
     }
@@ -129,12 +160,13 @@ function Post({ post, user, comments, onEditPost }) {
         <div
           className={styles.postMenu}
           onClick={() => setShowPostMenu((showMenu) => !showMenu)}
+          ref={menuRef}
         >
           <FontAwesomeIcon icon={faEllipsis} />
           {showPostMenu && (
             <ul className={styles.menu}>
               <li onClick={() => setIsEditing(true)}>Edit post</li>
-              <li>Delete post</li>
+              <li onClick={handleDeletePost}>Delete post</li>
             </ul>
           )}
         </div>

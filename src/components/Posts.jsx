@@ -20,6 +20,10 @@ function Posts({ user }) {
     );
   }
 
+  function handleDeletePost(deletedPost) {
+    setPosts((prev) => prev.filter((post) => post.id !== deletedPost.id));
+  }
+
   useEffect(function () {
     async function getPosts() {
       try {
@@ -53,6 +57,7 @@ function Posts({ user }) {
         posts={posts}
         comments={comments}
         onEditPost={handleEditPost}
+        onDeletePost={handleDeletePost}
       />
     </div>
   );
