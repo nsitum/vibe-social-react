@@ -26,6 +26,12 @@
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s all ease;
+}
+
+.profileInfo img:hover {
+  scale: 1.05;
 }
 
 .username {

@@ -6,3 +6,8 @@
   height: 4rem;
   font-size: 1.2rem;
 }
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

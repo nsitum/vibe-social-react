@@ -1,8 +1,13 @@
 import styles from "./Button.module.css";
 
-function Button({ children, className = "" }) {
+function Button({ children, className = "", isDisabled }) {
   return (
-    <button className={`${className || styles.ctaButton}`}>{children}</button>
+    <button
+      className={`${className || styles.ctaButton}`}
+      disabled={isDisabled}
+    >
+      {children}
+    </button>
   );
 }
 

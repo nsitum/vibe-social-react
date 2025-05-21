@@ -7,12 +7,13 @@ import {
   faPhotoFilm,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { useUser } from "../hooks/useUser";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
-function CreatePost({ user, onAddPost }) {
+function CreatePost({ onAddPost }) {
   const [content, setContent] = useState("");
-
+  const { user } = useUser();
   async function handleCreatePost(e) {
     e.preventDefault();
     try {

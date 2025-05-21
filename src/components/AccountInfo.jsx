@@ -2,10 +2,13 @@ import styles from "./AccountInfo.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router";
+import { useUser } from "../hooks/useUser";
 
-function AccountInfo({ user }) {
+function AccountInfo() {
+  const { user, setUser } = useUser();
   function handleLogout() {
     localStorage.removeItem("user");
+    setUser({});
   }
 
   return (
@@ -20,7 +23,7 @@ function AccountInfo({ user }) {
       </div>
       <ul className={styles.profileActions}>
         <li>
-          <Link to={"/modify-acc"} className={styles.link}>
+          <Link to={"/homepage/modify-acc"} className={styles.link}>
             <FontAwesomeIcon icon={faPen} className={styles.icon} />
             <span>Modify account</span>
           </Link>
