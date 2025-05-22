@@ -57,4 +57,64 @@ function validateRegister({
   return errors;
 }
 
-export { validateLogin, validateRegister };
+function validateModifyUser({
+  username,
+  email,
+  oldPassword,
+  newPassword,
+  existingUsers,
+  currentUserId,
+  currentPassword,
+}) {
+  const errors = [];
+
+  if (!username.trim()) {
+    errors.push({ field: "username", message: "Username is required." });
+  } else if (username.length < 3) {
+    errors.push({
+      field: "username",
+      message: "Username must be at least 3 characters.",
+    });
+  } else if (
+    existingUsers?.some(
+      (u) => u.username === username && u.id !== currentUserId
+    )
+  ) {
+    errors.push({ field: "username", message: "Username already exists." });
+  }
+
+  if (!email.trim()) {
+    errors.push({ field: "email", message: "Email is required." });
+  } else if (!/.+@.+\..+/.test(email)) {
+    errors.push({ field: "email", message: "Email format is invalid." });
+  } else if (
+    existingUsers?.some((u) => u.email === email && u.id !== currentUserId)
+  ) {
+    errors.push({ field: "email", message: "Email already exists." });
+  }
+
+  if (!oldPassword) {
+    errors.push({
+      field: "oldPassword",
+      message: "Current password is required.",
+    });
+  } else if (oldPassword !== currentPassword) {
+    errors.push({
+      field: "oldPassword",
+      message: "Incorrect current password.",
+    });
+  }
+
+  if (newPassword !== undefined && newPassword.trim().length > 0) {
+    if (newPassword.length < 6) {
+      errors.push({
+        field: "newPassword",
+        message: "New password must be at least 6 characters.",
+      });
+    }
+  }
+
+  return errors;
+}
+
+export { validateLogin, validateRegister, validateModifyUser };

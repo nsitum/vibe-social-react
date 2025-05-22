@@ -70,3 +70,7 @@
   height: 2.5rem;
   color: #777;
 }
+
+.error {
+  color: red;
+}

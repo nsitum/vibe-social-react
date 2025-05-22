@@ -14,7 +14,7 @@ function AccountInfo() {
   return (
     <div>
       <div className={styles.header}>
-        <img src="vibe.png" alt="Vibe logo" />
+        <img src="/vibe.png" alt="Vibe logo" />
         <h1>Vibe</h1>
       </div>
       <div className={styles.profileInfo}>
