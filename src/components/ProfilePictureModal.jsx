@@ -7,6 +7,7 @@ import Button from "./Button";
 import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { updateUserPosts } from "../helpers/updateUserPosts";
+import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 const PICTURE_API_URL =
@@ -18,6 +19,7 @@ function ProfilePictureModal() {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [imageError, setImageError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -56,12 +58,14 @@ function ProfilePictureModal() {
   async function handleUpload(e) {
     e.preventDefault();
     try {
+      setIsSubmitting(true);
       const formData = new FormData();
       formData.append("image", file);
       const res = await fetch(PICTURE_API_URL, {
         method: "POST",
         body: formData,
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       console.log(data.data.image.url);
       setUser({ ...user, pictureUrl: data.data.image.url });
@@ -77,8 +81,11 @@ function ProfilePictureModal() {
         newProfilePicture: data.data.image.url,
       });
       navigate("/homepage");
+      toast.success("Profile picture changed");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -109,7 +116,7 @@ function ProfilePictureModal() {
               alt="Preview image"
             />
           )}
-          <Button>Prenesi</Button>
+          <Button isDisabled={isSubmitting}>Prenesi</Button>
         </form>
         <button
           className={styles.closeBtn}

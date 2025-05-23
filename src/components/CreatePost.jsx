@@ -8,20 +8,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
 function CreatePost({ onAddPost }) {
-  const [content, setContent] = useState("");
   const { user } = useUser();
+  const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   async function handleCreatePost(e) {
     e.preventDefault();
     try {
+      setIsSubmitting(true);
       if (!content) throw new Error("Post can't be blank!");
 
       const newPost = {
         user_id: user.id,
-        content,
+        content: content.trim(),
         likes: 0,
         username: user.username,
         created_at: new Date(),
@@ -38,11 +42,15 @@ function CreatePost({ onAddPost }) {
         },
         body: JSON.stringify(newPost),
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       onAddPost(data);
       setContent("");
+      toast.success("Post created");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -72,7 +80,9 @@ function CreatePost({ onAddPost }) {
             <span>Schedule</span>
           </li>
         </ul>
-        <Button className={styles.CreatePostBtn}>Create post</Button>
+        <Button className={styles.CreatePostBtn} isDisabled={isSubmitting}>
+          Create post
+        </Button>
       </div>
     </form>
   );

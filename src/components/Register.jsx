@@ -72,9 +72,10 @@ function Register({
             placeholder="Confirm password"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          <p className={styles.error}>{"\u00A0"}</p>
         </div>
         <p className={styles.register}>
-          You don't have an account?{" "}
+          Already registered?{" "}
           <Link to={"/login"} onClick={handleActionChange}>
             Login
           </Link>

@@ -6,6 +6,7 @@ import Register from "./Register";
 import { useNavigate } from "react-router";
 import { validateLogin, validateRegister } from "../utils/validateForm";
 import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
@@ -27,6 +28,7 @@ function LoginForm() {
       async function getUsers() {
         try {
           const res = await fetch(BASE_URL + "/users");
+          if (!res.ok) throw new Error("Something went wrong");
           const data = await res.json();
           setUsers(data);
           return data;
@@ -70,10 +72,11 @@ function LoginForm() {
         },
         body: JSON.stringify(user),
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       return data;
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -102,9 +105,13 @@ function LoginForm() {
 
     if (currentAction === "login") {
       const user = handleLogin();
-      if (!user) return;
+      if (!user) {
+        toast.error("No user found");
+        return;
+      }
       localStorage.setItem("user", JSON.stringify(user.id));
       navigate("/homepage");
+      toast.success("Successfully logged in");
     }
 
     if (currentAction === "register") {
@@ -122,8 +129,9 @@ function LoginForm() {
         setUser(user);
         localStorage.setItem("user", JSON.stringify(user.id));
         navigate("/homepage");
+        toast.success("Successfully registered");
       } catch (err) {
-        console.error(err);
+        toast.error(err.message);
       }
     }
   }

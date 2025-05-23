@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { validateModifyUser } from "../utils/validateForm";
 import { updateUserPosts } from "../helpers/updateUserPosts";
+import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
@@ -47,7 +48,7 @@ function ModifyAccountModal() {
         const data = await res.json();
         setUsers(data);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        toast.error(err.message);
       }
     }
 
@@ -84,22 +85,16 @@ function ModifyAccountModal() {
           ...(newPassword?.trim() && { password: newPassword }),
         }),
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       // Ažuriraj i postove
-      console.log(user.id, username, user.profilePicture);
       await updateUserPosts({ userId: user.id, newUsername: username });
       setUser(data);
       navigate("/homepage");
       setNewPassword("");
-
-      // // Po želji: ažuriraj lokalni state postova
-      // setPosts((prevPosts) =>
-      //   prevPosts.map((post) =>
-      //     post.userId === user.id ? { ...post, username, profilePicture } : post
-      //   )
-      // );
+      toast.success("Successfully modified user");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     } finally {
       setIsModifying(false);
     }

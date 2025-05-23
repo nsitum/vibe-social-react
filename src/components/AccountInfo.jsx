@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router";
 import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 
 function AccountInfo() {
   const { user, setUser } = useUser();
@@ -11,6 +12,7 @@ function AccountInfo() {
   function handleLogout() {
     localStorage.removeItem("user");
     setUser({});
+    toast.success("Successfully logged out");
   }
 
   return (

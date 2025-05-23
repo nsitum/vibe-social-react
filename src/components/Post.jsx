@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import Comment from "./Comment";
 import { motion } from "framer-motion";
 import Button from "./Button";
+import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
@@ -68,7 +69,7 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
         body: JSON.stringify({ postsLiked: likePayload }),
       });
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     }
   }
 
@@ -83,11 +84,13 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
         },
         body: JSON.stringify({ content: editContent }),
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       setIsEditing(false);
       onEditPost(data);
+      toast.success("Successfully edited post");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     }
   }
 
@@ -99,11 +102,13 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
       const res = await fetch(BASE_URL + `/posts/${post.id}`, {
         method: "DELETE",
       });
+      if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
 
       onDeletePost(data);
+      toast.success("Successfully deleted post");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     }
   }
 
