@@ -58,6 +58,7 @@ function Posts() {
         user={user}
         posts={posts}
         comments={comments}
+        setComments={setComments}
         onEditPost={handleEditPost}
         onDeletePost={handleDeletePost}
       />

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsis,
   faHeart as faHeartSolid,
+  faComment as faCommentSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useRef, useState } from "react";
@@ -12,12 +13,16 @@ import Button from "./Button";
 import toast from "react-hot-toast";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
+const BASE_COMMENT_URL = "https://67de8fa8471aaaa74284e035.mockapi.io";
 
-function Post({ post, user, comments, onEditPost, onDeletePost }) {
+function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [likes, setLikes] = useState(post.likes);
   const [isLiked, setIsLiked] = useState(user.postsLiked?.includes(post.id));
   const [isLiking, setIsLiking] = useState(false);
+  const [comment, setComment] = useState("");
+  const [isCommenting, setIsCommenting] = useState(false);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
 
@@ -37,6 +42,7 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
   }, []);
 
   const heartIcon = isLiked ? faHeartSolid : faHeart;
+  const commentIcon = isCommenting ? faCommentSolid : faComment;
 
   const { div: MotionDiv } = motion;
 
@@ -70,6 +76,42 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
       });
     } catch (err) {
       toast.error(err.message);
+    }
+  }
+
+  async function handleCommentPost(e) {
+    e.preventDefault();
+    try {
+      setIsSubmittingComment(true);
+      if (!comment.length) throw new Error("Comment can't be empty");
+      if (comment.length > 200) throw new Error("Comment too long!");
+      const newComment = {
+        post_id: post.id,
+        content: comment.trim(),
+        user_id: user.id,
+        authorUser: user.username,
+        likes: 0,
+        pictureUrl: user.pictureUrl,
+        created_at: new Date(),
+      };
+
+      const res = await fetch(BASE_COMMENT_URL + "/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newComment),
+      });
+      if (!res.ok) throw new Error("Something went wrong");
+      const data = await res.json();
+      setComments((prev) => [...prev, data]);
+      setComment("");
+      toast.success("Successfully commented");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsCommenting(false);
+      setIsSubmittingComment(false);
     }
   }
 
@@ -134,7 +176,7 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
           />
-          <Button className={styles.editPostBtn}>Edit</Button>
+          <Button className={styles.postBtn}>Edit</Button>
         </form>
       ) : (
         <p className={styles.postContent}>{post.content}</p>
@@ -144,7 +186,7 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
           <motion.button
             whileTap={{ scale: 1.2 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className={styles.likeBtn}
+            className={styles.actionBtn}
             disabled={isLiking}
             onClick={async () => {
               setIsLiking(true);
@@ -157,8 +199,13 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
           </motion.button>
         </li>
         <li>
-          <FontAwesomeIcon icon={faComment} />
-          <span className={styles.commentCount}>{post.comments?.length}</span>
+          <button
+            className={styles.actionBtn}
+            onClick={() => setIsCommenting((prev) => !prev)}
+          >
+            <FontAwesomeIcon icon={commentIcon} />
+            <span className={styles.commentCount}>{postComments?.length}</span>
+          </button>
         </li>
       </ul>
       {user.id === post.user_id && (
@@ -177,11 +224,27 @@ function Post({ post, user, comments, onEditPost, onDeletePost }) {
         </div>
       )}
 
+      {isCommenting && (
+        <form onSubmit={handleCommentPost}>
+          <input
+            type="text"
+            className={styles.editInput}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <Button className={styles.postBtn} isDisabled={isSubmittingComment}>
+            Comment
+          </Button>
+        </form>
+      )}
+
       {!!postComments.length && (
         <ul className={styles.comments}>
-          {postComments.map((comment) => (
-            <Comment comment={comment} key={comment.id} />
-          ))}
+          {[...postComments]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .map((comment) => (
+              <Comment comment={comment} key={comment.id} />
+            ))}
         </ul>
       )}
     </MotionDiv>

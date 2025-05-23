@@ -1,7 +1,14 @@
 import Post from "./Post";
 import styles from "./PostList.module.css";
 
-function PostList({ user, posts, comments, onEditPost, onDeletePost }) {
+function PostList({
+  user,
+  posts,
+  comments,
+  setComments,
+  onEditPost,
+  onDeletePost,
+}) {
   if (!user?.postsLiked) return null;
 
   return (
@@ -13,6 +20,7 @@ function PostList({ user, posts, comments, onEditPost, onDeletePost }) {
             post={post}
             user={user}
             comments={comments}
+            setComments={setComments}
             onEditPost={onEditPost}
             onDeletePost={onDeletePost}
             key={post.id}
