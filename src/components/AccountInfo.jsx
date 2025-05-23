@@ -1,11 +1,13 @@
 import styles from "./AccountInfo.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useUser } from "../hooks/useUser";
 
 function AccountInfo() {
   const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
   function handleLogout() {
     localStorage.removeItem("user");
     setUser({});
@@ -18,7 +20,11 @@ function AccountInfo() {
         <h1>Vibe</h1>
       </div>
       <div className={styles.profileInfo}>
-        <img src={user.pictureUrl} alt="Profile picture" />
+        <img
+          src={user.pictureUrl}
+          alt="Profile picture"
+          onClick={() => navigate("profile-picture")}
+        />
         <p className={styles.username}>{user.username}</p>
       </div>
       <ul className={styles.profileActions}>

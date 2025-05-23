@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ModifyAccount from "./pages/ModifyAccount";
 import { UserProvider } from "./contexts/UserContext";
+import ProfilePicture from "./pages/ProfilePicture";
 
 function App() {
   return (
@@ -26,6 +27,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ModifyAccount />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/homepage/profile-picture"
+              element={
+                <ProtectedRoute>
+                  <ProfilePicture />
                 </ProtectedRoute>
               }
             />

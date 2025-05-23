@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { validateModifyUser } from "../utils/validateForm";
+import { updateUserPosts } from "../helpers/updateUserPosts";
 
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 
@@ -84,9 +85,19 @@ function ModifyAccountModal() {
         }),
       });
       const data = await res.json();
+      // Ažuriraj i postove
+      console.log(user.id, username, user.profilePicture);
+      await updateUserPosts({ userId: user.id, newUsername: username });
       setUser(data);
       navigate("/homepage");
       setNewPassword("");
+
+      // // Po želji: ažuriraj lokalni state postova
+      // setPosts((prevPosts) =>
+      //   prevPosts.map((post) =>
+      //     post.userId === user.id ? { ...post, username, profilePicture } : post
+      //   )
+      // );
     } catch (err) {
       console.error(err);
     } finally {
