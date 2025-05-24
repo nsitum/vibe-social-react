@@ -103,7 +103,7 @@ function ProfilePictureModal() {
           <input
             type="file"
             accept="image/*"
-            style={{ backgroundColor: "#4a90e2" }}
+            className={styles.uploadInput}
             onChange={uploadPhoto}
           />
           <p className={styles.error}>

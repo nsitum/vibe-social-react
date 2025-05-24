@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useUser } from "../hooks/useUser";
 import toast from "react-hot-toast";
 
-function AccountInfo() {
+function AccountInfo({ activeState }) {
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
@@ -16,7 +16,11 @@ function AccountInfo() {
   }
 
   return (
-    <div>
+    <div
+      className={`${styles.accountInfo} ${
+        activeState === "all" || activeState === "account" ? "" : "hidden"
+      }`}
+    >
       <div className={styles.header}>
         <img src="/vibe.png" alt="Vibe logo" />
         <h1>Vibe</h1>

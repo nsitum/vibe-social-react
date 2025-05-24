@@ -9,6 +9,8 @@
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
 }
 
 .postInfo {
@@ -76,6 +78,12 @@
   transition: 0.3s all ease;
   /* pointer-events: none; */
   font-size: 1.8rem;
+}
+
+@media (max-width: 59em) {
+  .menu {
+    transform: translateX(-80%);
+  }
 }
 
 .menu li:hover {

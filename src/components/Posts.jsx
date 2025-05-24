@@ -7,7 +7,7 @@ import { useUser } from "../hooks/useUser";
 const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
 const BASE_COMMENT_URL = "https://67de8fa8471aaaa74284e035.mockapi.io";
 
-function Posts() {
+function Posts({ activeState }) {
   const { user } = useUser();
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
@@ -52,7 +52,11 @@ function Posts() {
   }, []);
 
   return (
-    <div className={styles.posts}>
+    <div
+      className={`${styles.posts} ${
+        activeState === "all" || activeState === "posts" ? "" : "hidden"
+      }`}
+    >
       <CreatePost user={user} onAddPost={handleAddPost} />
       <PostList
         user={user}

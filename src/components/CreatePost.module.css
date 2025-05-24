@@ -7,6 +7,13 @@
   border-radius: 1rem;
 }
 
+@media (max-width: 59em) {
+  .form {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
 .postInput {
   display: flex;
   justify-content: space-between;
@@ -14,10 +21,18 @@
   gap: 1rem;
 }
 
+@media (max-width: 59em) {
+  .postInput {
+    width: 100%;
+  }
+}
+
 .form img {
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
 }
 
 .form input {
@@ -46,6 +61,12 @@
   justify-content: center;
   align-items: center;
   gap: 2rem;
+}
+
+@media (max-width: 59em) {
+  .postActions ul {
+    display: none;
+  }
 }
 
 .postActions ul li {

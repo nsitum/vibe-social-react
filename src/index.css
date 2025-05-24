@@ -23,6 +23,19 @@ html {
   font-size: 62.5%;
 }
 
+@media (max-width: 75em) {
+  html {
+    /* 9px / 16px  */
+    font-size: 56.25%;
+  }
+}
+
+@media (max-width: 59em) {
+  html {
+    font-size: 50%;
+  }
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -37,8 +50,15 @@ body {
   padding: 0;
 
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #121212;
+  overflow-x: hidden;
+}
+
+@media (max-width: 75em) {
+  body {
+    overflow-x: hidden;
+  }
 }
 
 h1 {
@@ -75,5 +95,11 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 59em) {
+  .hidden {
+    display: none !important;
   }
 }

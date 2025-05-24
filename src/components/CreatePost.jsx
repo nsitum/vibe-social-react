@@ -57,7 +57,7 @@ function CreatePost({ onAddPost }) {
   return (
     <form className={styles.form} onSubmit={handleCreatePost}>
       <div className={styles.postInput}>
-        <img src={user.pictureUrl} alt="" />
+        <img src={user.pictureUrl} alt="Profile picture" />
         <input
           type="text"
           placeholder="Write post..."

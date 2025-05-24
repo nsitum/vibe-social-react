@@ -26,6 +26,8 @@
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
   cursor: pointer;
   transition: 0.3s all ease;
 }
@@ -69,4 +71,10 @@
 .link:hover {
   color: #fff;
   background-color: #333;
+}
+
+@media (max-width: 59em) {
+  .accountInfo {
+    margin: 0 auto;
+  }
 }

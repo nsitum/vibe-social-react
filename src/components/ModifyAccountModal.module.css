@@ -78,3 +78,8 @@
 .previewImg {
   width: 10rem;
 }
+
+.uploadInput {
+  background-color: #4a90e2;
+  width: 100%;
+}
