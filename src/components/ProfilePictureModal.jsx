@@ -45,8 +45,8 @@ function ProfilePictureModal() {
       return;
     }
 
-    if (file?.size > 5 * 1024 * 1024) {
-      setImageError("Datoteka ne smije biti veća od 5MB");
+    if (file?.size > 7 * 1024 * 1024) {
+      setImageError("Datoteka ne smije biti veća od 7MB");
       setPreviewUrl("");
       return;
     }
