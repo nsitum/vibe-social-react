@@ -10,7 +10,7 @@ import { updateUserPosts } from "../helpers/updateUserPosts";
 import toast from "react-hot-toast";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const PICTURE_API_URL = import.meta.env.VITE_COMMENTS_URL;
+const PICTURE_API_URL = import.meta.env.VITE_PICTURE_URL;
 
 function ProfilePictureModal() {
   const { user, setUser } = useUser();
