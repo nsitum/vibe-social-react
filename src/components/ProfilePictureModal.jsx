@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import styles from "./ModifyaccountModal.module.css";
+import styles from "./ModifyAccountModal.module.css";
 import { motion } from "framer-motion";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
