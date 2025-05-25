@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useUser } from "../hooks/useUser";
 import toast from "react-hot-toast";
 
-const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function CreatePost({ onAddPost }) {
   const { user } = useUser();

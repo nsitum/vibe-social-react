@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 
 const UserContext = createContext({});
 
-const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function UserProvider({ children }) {
   const [user, setUser] = useState({});

@@ -4,8 +4,8 @@ import PostList from "./PostList";
 import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 
-const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
-const BASE_COMMENT_URL = "https://67de8fa8471aaaa74284e035.mockapi.io";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_COMMENT_URL = import.meta.env.VITE_COMMENTS_URL;
 
 function Posts({ activeState }) {
   const { user } = useUser();

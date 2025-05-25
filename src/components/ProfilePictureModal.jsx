@@ -9,9 +9,8 @@ import { useUser } from "../hooks/useUser";
 import { updateUserPosts } from "../helpers/updateUserPosts";
 import toast from "react-hot-toast";
 
-const BASE_URL = "https://658c7c29859b3491d3f6257e.mockapi.io";
-const PICTURE_API_URL =
-  "https://api.imgbb.com/1/upload?key=1f8988d2d3af8f2806d4d77a1325ec15";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const PICTURE_API_URL = import.meta.env.VITE_COMMENTS_URL;
 
 function ProfilePictureModal() {
   const { user, setUser } = useUser();
