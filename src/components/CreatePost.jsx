@@ -24,21 +24,14 @@ function CreatePost({ onAddPost }) {
       if (!content) throw new Error("Post can't be blank!");
 
       const newPost = {
-        user_id: user.id,
         content: content.trim(),
-        likes: 0,
-        username: user.username,
-        created_at: new Date(),
-        edited_at: "",
-        isEdited: false,
-        comments: [],
-        profilePicture: user.pictureUrl,
       };
 
       const res = await fetch(BASE_URL + "/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(newPost),
       });

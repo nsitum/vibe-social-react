@@ -13,21 +13,20 @@ import Button from "./Button";
 import toast from "react-hot-toast";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const BASE_COMMENT_URL = import.meta.env.VITE_COMMENTS_URL;
 
-function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
+function Post({ post, user, onEditPost, onDeletePost }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
-  const [likes, setLikes] = useState(post.likes);
-  const [isLiked, setIsLiked] = useState(user.postsLiked?.includes(post.id));
+  const [likes, setLikes] = useState(post.likesCount);
+  const [isLiked, setIsLiked] = useState(post.isLiked);
   const [isLiking, setIsLiking] = useState(false);
   const [comment, setComment] = useState("");
+  const [postComments, setPostComments] = useState([]);
   const [isCommenting, setIsCommenting] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
 
   const menuRef = useRef();
-
   useEffect(function () {
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -41,39 +40,50 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
     };
   }, []);
 
+  useEffect(
+    function () {
+      async function fetchComments() {
+        try {
+          const res = await fetch(`${BASE_URL}/comments/${post.id}`);
+          if (!res.ok) throw new Error("Failed to fetch comments");
+          const data = await res.json();
+          setPostComments(data);
+        } catch (err) {
+          console.error("Error fetching comments:", err);
+        }
+      }
+
+      fetchComments();
+    },
+    [post.id]
+  );
+
   const heartIcon = isLiked ? faHeartSolid : faHeart;
   const commentIcon = isCommenting ? faCommentSolid : faComment;
 
   const { div: MotionDiv } = motion;
 
-  const postComments = comments.filter(
-    (comment) => comment.post_id === post.id
-  );
-
-  const date = new Date(post.created_at).toLocaleString().slice(0, -3);
-  const likePayload = isLiked
-    ? user.postsLiked.filter((id) => id !== post.id)
-    : [...user.postsLiked, post.id];
+  const date = new Date(post.createdAt).toLocaleString().slice(0, -3);
 
   async function handlePostLike() {
     try {
       setLikes((likes) => (isLiked ? likes - 1 : likes + 1));
       setIsLiked((liked) => !liked);
-      await fetch(BASE_URL + `/posts/${post.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ likes: isLiked ? likes - 1 : likes + 1 }),
-      });
-
-      await fetch(BASE_URL + `/users/${user.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postsLiked: likePayload }),
-      });
+      isLiked
+        ? await fetch(`${BASE_URL}/likes/${post.id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+        : await fetch(BASE_URL + `/likes`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ postId: post.id }),
+          });
     } catch (err) {
       toast.error(err.message);
     }
@@ -86,25 +96,22 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
       if (!comment.length) throw new Error("Comment can't be empty");
       if (comment.length > 200) throw new Error("Comment too long!");
       const newComment = {
-        post_id: post.id,
+        postId: post.id,
         content: comment.trim(),
-        user_id: user.id,
-        authorUser: user.username,
-        likes: 0,
-        pictureUrl: user.pictureUrl,
-        created_at: new Date(),
       };
 
-      const res = await fetch(BASE_COMMENT_URL + "/comments", {
+      const res = await fetch(BASE_URL + "/comments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(newComment),
       });
       if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
-      setComments((prev) => [...prev, data]);
+
+      setPostComments((prev) => [...prev, data]);
       setComment("");
       toast.success("Successfully commented");
     } catch (err) {
@@ -123,6 +130,7 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ content: editContent }),
       });
@@ -143,6 +151,9 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
 
       const res = await fetch(BASE_URL + `/posts/${post.id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
@@ -162,9 +173,9 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
       className={styles.post}
     >
       <div className={styles.postInfo}>
-        <img src={post.profilePicture} alt="Profile picture" />
+        <img src={post.user.pictureUrl} alt="Profile picture" />
         <div className={styles.postUserAndDate}>
-          <span className={styles.postUser}>{post.username}</span>
+          <span className={styles.postUser}>{post.user.username}</span>
           <span className={styles.postDate}>{date}</span>
         </div>
       </div>
@@ -208,7 +219,7 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
           </button>
         </li>
       </ul>
-      {user.id === post.user_id && (
+      {user.id === post.user.id && (
         <div
           className={styles.postMenu}
           onClick={() => setShowPostMenu((showMenu) => !showMenu)}
@@ -241,7 +252,7 @@ function Post({ post, user, comments, setComments, onEditPost, onDeletePost }) {
       {!!postComments.length && (
         <ul className={styles.comments}>
           {[...postComments]
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .map((comment) => (
               <Comment comment={comment} key={comment.id} />
             ))}

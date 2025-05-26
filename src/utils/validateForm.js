@@ -64,7 +64,6 @@ function validateModifyUser({
   newPassword,
   existingUsers,
   currentUserId,
-  currentPassword,
 }) {
   const errors = [];
 
@@ -97,11 +96,6 @@ function validateModifyUser({
     errors.push({
       field: "oldPassword",
       message: "Current password is required.",
-    });
-  } else if (oldPassword !== currentPassword) {
-    errors.push({
-      field: "oldPassword",
-      message: "Incorrect current password.",
     });
   }
 

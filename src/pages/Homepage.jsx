@@ -7,14 +7,15 @@ import { useState } from "react";
 
 function Homepage() {
   const [activeState, setActiveState] = useState("account");
+  const [posts, setPosts] = useState([]);
 
   return (
     <>
       <div className={styles.homepage}>
         <MobileMenu activeState={activeState} setActiveState={setActiveState} />
         <AccountInfo activeState={activeState} />
-        <Posts activeState={activeState} />
-        <Outlet />
+        <Posts activeState={activeState} posts={posts} setPosts={setPosts} />
+        <Outlet context={{ setPosts }} />
       </div>
     </>
   );

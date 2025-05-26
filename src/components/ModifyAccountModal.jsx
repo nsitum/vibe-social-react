@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { validateModifyUser } from "../utils/validateForm";
-import { updateUserPosts } from "../helpers/updateUserPosts";
+import { updateUserPosts } from "../helpers/updateUserPosts.js";
 import toast from "react-hot-toast";
+import { useOutletContext } from "react-router";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -22,6 +23,7 @@ function ModifyAccountModal() {
   const [isModifying, setIsModifying] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const { setPosts } = useOutletContext();
 
   const { div: MotionDiv } = motion;
 
@@ -44,7 +46,12 @@ function ModifyAccountModal() {
   useEffect(() => {
     async function getAllUsers() {
       try {
-        const res = await fetch(BASE_URL + "/users");
+        const res = await fetch(BASE_URL + "/users", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
         const data = await res.json();
         setUsers(data);
       } catch (err) {
@@ -67,17 +74,17 @@ function ModifyAccountModal() {
         newPassword,
         existingUsers: users,
         currentUserId: user.id,
-        currentPassword: user.password,
       });
       if (formErrors.length) {
         setFormErrors(formErrors);
         return;
       }
 
-      const res = await fetch(BASE_URL + `/users/${user.id}`, {
+      const res = await fetch(BASE_URL + "/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           username,
@@ -88,7 +95,11 @@ function ModifyAccountModal() {
       if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
       // Ažuriraj i postove
-      await updateUserPosts({ userId: user.id, newUsername: username });
+      await updateUserPosts({
+        userId: user.id,
+        newUsername: username,
+        setPosts,
+      });
       setUser(data);
       navigate("/homepage");
       setNewPassword("");

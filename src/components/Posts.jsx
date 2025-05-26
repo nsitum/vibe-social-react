@@ -1,16 +1,14 @@
 import styles from "./Posts.module.css";
 import CreatePost from "./CreatePost";
 import PostList from "./PostList";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const BASE_COMMENT_URL = import.meta.env.VITE_COMMENTS_URL;
 
-function Posts({ activeState }) {
+function Posts({ activeState, posts, setPosts }) {
   const { user } = useUser();
-  const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState([]);
 
   function handleAddPost(newPost) {
     setPosts((prev) => [newPost, ...prev]);
@@ -29,27 +27,22 @@ function Posts({ activeState }) {
   useEffect(function () {
     async function getPosts() {
       try {
-        const res = await fetch(BASE_URL + "/posts");
+        const res = await fetch(BASE_URL + "/posts", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = await res.json();
         setPosts(data);
       } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function getComments() {
-      try {
-        const res = await fetch(BASE_COMMENT_URL + "/comments");
-        const data = await res.json();
-        setComments(data);
-      } catch (err) {
-        console.error(err);
+        toast.error(err.message);
       }
     }
 
     getPosts();
-    getComments();
   }, []);
+
+  if (!posts || !Array.isArray(posts)) return null;
 
   return (
     <div
@@ -61,8 +54,6 @@ function Posts({ activeState }) {
       <PostList
         user={user}
         posts={posts}
-        comments={comments}
-        setComments={setComments}
         onEditPost={handleEditPost}
         onDeletePost={handleDeletePost}
       />

@@ -5,27 +5,41 @@ const UserContext = createContext({});
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function UserProvider({ children }) {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(function () {
-    const stored = localStorage.getItem("user");
-    if (!stored) return;
+    async function fetchUserFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
 
-    async function getUser() {
       try {
-        const userId = JSON.parse(localStorage.getItem("user"));
-        const res = await fetch(BASE_URL + `/users/${userId}`);
+        const res = await fetch(BASE_URL + "/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         const data = await res.json();
-        setUser(data);
+        if (!res.ok) {
+          console.error("Bad token:", data?.error);
+          localStorage.removeItem("token");
+        }
+        setUser(data.user);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching user:", err);
+      } finally {
+        setIsLoading(false);
       }
     }
-    getUser();
+    fetchUserFromToken();
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isLoading }}>
       {children}
     </UserContext.Provider>
   );

@@ -10,9 +10,10 @@ function AccountInfo({ activeState }) {
   const navigate = useNavigate();
 
   function handleLogout() {
-    localStorage.removeItem("user");
-    setUser({});
+    localStorage.removeItem("token");
+    setUser(null);
     toast.success("Successfully logged out");
+    navigate("/login", { replace: true });
   }
 
   return (
@@ -41,12 +42,7 @@ function AccountInfo({ activeState }) {
           </Link>
         </li>
         <li>
-          <Link
-            to={"/login"}
-            replace
-            className={styles.link}
-            onClick={handleLogout}
-          >
+          <Link replace className={styles.link} onClick={handleLogout}>
             <FontAwesomeIcon
               icon={faRightFromBracket}
               className={styles.icon}

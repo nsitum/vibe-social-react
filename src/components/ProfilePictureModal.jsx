@@ -8,13 +8,14 @@ import { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { updateUserPosts } from "../helpers/updateUserPosts";
 import toast from "react-hot-toast";
+import { useOutletContext } from "react-router";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const PICTURE_API_URL = import.meta.env.VITE_PICTURE_URL;
 
 function ProfilePictureModal() {
   const { user, setUser } = useUser();
-
+  const { setPosts } = useOutletContext();
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [imageError, setImageError] = useState("");
@@ -26,7 +27,7 @@ function ProfilePictureModal() {
 
   useEffect(() => {
     if (!file) return;
-    console.log("bbbb");
+
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
 
@@ -58,27 +59,39 @@ function ProfilePictureModal() {
     e.preventDefault();
     try {
       setIsSubmitting(true);
+
       const formData = new FormData();
       formData.append("image", file);
+
       const res = await fetch(PICTURE_API_URL, {
         method: "POST",
         body: formData,
       });
       if (!res.ok) throw new Error("Something went wrong");
+
       const data = await res.json();
-      console.log(data.data.image.url);
+
       setUser({ ...user, pictureUrl: data.data.image.url });
-      await fetch(BASE_URL + `/users/${user.id}`, {
+      const resUpdate = await fetch(BASE_URL + "/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ pictureUrl: data.data.image.url }),
       });
-      await updateUserPosts({
+
+      if (!resUpdate.ok) throw new Error("Failed to update profile picture");
+
+      const updatedUser = await resUpdate.json();
+      setUser(updatedUser);
+
+      updateUserPosts({
         userId: user.id,
         newProfilePicture: data.data.image.url,
+        setPosts,
       });
+
       navigate("/homepage");
       toast.success("Profile picture changed");
     } catch (err) {

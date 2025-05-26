@@ -11,13 +11,12 @@ import toast from "react-hot-toast";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function LoginForm() {
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentAction, setCurrentAction] = useState("login");
-  const [users, setUsers] = useState([]);
   const [formErrors, setFormErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,28 +24,9 @@ function LoginForm() {
 
   useEffect(
     function () {
-      async function getUsers() {
-        try {
-          const res = await fetch(BASE_URL + "/users");
-          if (!res.ok) throw new Error("Something went wrong");
-          const data = await res.json();
-          setUsers(data);
-          return data;
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      function isLoggedIn() {
-        const localUserId = localStorage.getItem("user");
-        if (!localUserId) return false;
-        return true;
-      }
-      if (isLoggedIn()) navigate("/homepage");
-
-      getUsers();
+      if (user) navigate("/homepage");
     },
-    [navigate]
+    [user, navigate]
   );
 
   async function handleRegister(user) {
@@ -58,7 +38,6 @@ function LoginForm() {
         email,
         password,
         confirmPassword,
-        users,
       });
       if (formErrors.length) {
         setFormErrors(formErrors);
@@ -74,7 +53,12 @@ function LoginForm() {
       });
       if (!res.ok) throw new Error("Something went wrong");
       const data = await res.json();
-      return data;
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user.id));
+
+      setUser(data.user);
+      return data.user;
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -82,34 +66,50 @@ function LoginForm() {
     }
   }
 
-  function handleLogin() {
-    setFormErrors([]);
-    setIsLoading(true);
-    const formErrors = validateLogin({ username, password });
-    if (formErrors.length) {
-      setFormErrors(formErrors);
-      return;
+  async function handleLogin() {
+    try {
+      setFormErrors([]);
+      setIsLoading(true);
+
+      const formErrors = validateLogin({ username, password });
+      if (formErrors.length) {
+        setFormErrors(formErrors);
+        return;
+      }
+
+      const res = await fetch(BASE_URL + "/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Login failed");
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user.id));
+
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      toast.error(err.message);
+      return null;
+    } finally {
+      setIsLoading(false);
     }
-
-    const foundUser = users.find(
-      (user) => user.username === username && user.password === password
-    );
-
-    setUser(foundUser);
-    setIsLoading(false);
-    return foundUser;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (currentAction === "login") {
-      const user = handleLogin();
-      if (!user) {
-        toast.error("No user found");
-        return;
-      }
-      localStorage.setItem("user", JSON.stringify(user.id));
+      const user = await handleLogin();
+      if (!user) return;
       navigate("/homepage");
       toast.success("Successfully logged in");
     }
@@ -120,14 +120,13 @@ function LoginForm() {
           email,
           username,
           password,
+          confirmPassword,
+          pictureUrl: "",
           postsLiked: [],
-          pictureUrl: "https://i.ibb.co/PZc8hcgv/defaultimage.jpg",
         };
 
         const user = await handleRegister(newUser);
         if (!user) return;
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user.id));
         navigate("/homepage");
         toast.success("Successfully registered");
       } catch (err) {
