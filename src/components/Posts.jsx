@@ -24,23 +24,26 @@ function Posts({ activeState, posts, setPosts }) {
     setPosts((prev) => prev.filter((post) => post.id !== deletedPost.id));
   }
 
-  useEffect(function () {
-    async function getPosts() {
-      try {
-        const res = await fetch(BASE_URL + "/posts", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        setPosts(data);
-      } catch (err) {
-        toast.error(err.message);
+  useEffect(
+    function () {
+      async function getPosts() {
+        try {
+          const res = await fetch(BASE_URL + "/posts", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await res.json();
+          setPosts(data);
+        } catch (err) {
+          toast.error(err.message);
+        }
       }
-    }
 
-    getPosts();
-  }, []);
+      getPosts();
+    },
+    [setPosts]
+  );
 
   if (!posts || !Array.isArray(posts)) return null;
 
