@@ -12,6 +12,8 @@ function Register({
   setConfirmPassword,
   onCurrentAction,
   formErrors,
+  onChange,
+  touchedFields,
 }) {
   function handleActionChange() {
     onCurrentAction("login");
@@ -29,11 +31,14 @@ function Register({
             type="text"
             value={username}
             placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              onChange("username", e.target.value);
+            }}
           />
           <p className={styles.error}>
             {
-              usernameError
+              usernameError && touchedFields.username
                 ? usernameError.message
                 : "\u00A0" /* &nbsp; fallback */
             }
@@ -44,10 +49,17 @@ function Register({
             type="email"
             value={email}
             placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              onChange("email", e.target.value);
+            }}
           />
           <p className={styles.error}>
-            {emailError ? emailError.message : "\u00A0" /* &nbsp; fallback */}
+            {
+              emailError && touchedFields.email
+                ? emailError.message
+                : "\u00A0" /* &nbsp; fallback */
+            }
           </p>
         </div>
         <div>
@@ -55,11 +67,14 @@ function Register({
             type="password"
             value={password}
             placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              onChange("password", e.target.value);
+            }}
           />
           <p className={styles.error}>
             {
-              passwordError
+              passwordError && touchedFields.password
                 ? passwordError.message
                 : "\u00A0" /* &nbsp; fallback */
             }
@@ -70,7 +85,10 @@ function Register({
             type="password"
             value={confirmPassword}
             placeholder="Confirm password"
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              onChange("confirmPassword", e.target.value);
+            }}
           />
           <p className={styles.error}>{"\u00A0"}</p>
         </div>

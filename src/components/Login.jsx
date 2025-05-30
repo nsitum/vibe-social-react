@@ -8,6 +8,8 @@ function Login({
   setPassword,
   onCurrentAction,
   formErrors,
+  onChange,
+  touchedFields,
 }) {
   function handleActionChange() {
     onCurrentAction("register");
@@ -23,11 +25,14 @@ function Login({
           type="text"
           value={username}
           placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            onChange("username", e.target.value);
+          }}
         />
         <p className={styles.error}>
           {
-            usernameError
+            usernameError && touchedFields.username
               ? usernameError.message
               : "\u00A0" /* &nbsp; fallback */
           }
@@ -36,11 +41,14 @@ function Login({
           type="password"
           value={password}
           placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            onChange("password", e.target.value);
+          }}
         />
         <p className={styles.error}>
           {
-            passwordError
+            passwordError && touchedFields.password
               ? passwordError.message
               : "\u00A0" /* &nbsp; fallback */
           }

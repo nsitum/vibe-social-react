@@ -19,6 +19,7 @@ function LoginForm() {
   const [currentAction, setCurrentAction] = useState("login");
   const [formErrors, setFormErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState({});
 
   const navigate = useNavigate();
 
@@ -29,20 +30,32 @@ function LoginForm() {
     [user, navigate]
   );
 
+  function handleChange(fieldName, value) {
+    if (!touchedFields[fieldName]) {
+      setTouchedFields((prev) => ({ ...prev, [fieldName]: true }));
+    }
+
+    const updated = {
+      username,
+      password,
+      email,
+      confirmPassword,
+      [fieldName]: value,
+    };
+
+    const errors =
+      currentAction === "login"
+        ? validateLogin(updated)
+        : validateRegister(updated);
+
+    setFormErrors(errors);
+  }
+
   async function handleRegister(user) {
     try {
-      setFormErrors([]);
       setIsLoading(true);
-      const formErrors = validateRegister({
-        username,
-        email,
-        password,
-        confirmPassword,
-      });
-      if (formErrors.length) {
-        setFormErrors(formErrors);
-        return;
-      }
+
+      if (formErrors.length) return;
 
       const res = await fetch(BASE_URL + "/users", {
         method: "POST",
@@ -68,14 +81,9 @@ function LoginForm() {
 
   async function handleLogin() {
     try {
-      setFormErrors([]);
       setIsLoading(true);
 
-      const formErrors = validateLogin({ username, password });
-      if (formErrors.length) {
-        setFormErrors(formErrors);
-        return;
-      }
+      if (formErrors.length) return;
 
       const res = await fetch(BASE_URL + "/auth/login", {
         method: "POST",
@@ -150,6 +158,8 @@ function LoginForm() {
             setPassword={setPassword}
             onCurrentAction={setCurrentAction}
             formErrors={formErrors}
+            onChange={handleChange}
+            touchedFields={touchedFields}
           />
         ) : (
           <Register
@@ -163,6 +173,8 @@ function LoginForm() {
             setConfirmPassword={setConfirmPassword}
             onCurrentAction={setCurrentAction}
             formErrors={formErrors}
+            onChange={handleChange}
+            touchedFields={touchedFields}
           />
         )}
         <Button disabled={isLoading}>

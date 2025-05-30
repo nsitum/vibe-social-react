@@ -53,5 +53,6 @@
 }
 
 .error {
-  color: red;
+  color: #ff0033;
+  font-weight: 700;
 }

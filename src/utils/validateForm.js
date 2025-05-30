@@ -12,6 +12,13 @@ function validateLogin({ username, password }) {
     errors.push({ field: "password", message: "Password is required." });
   }
 
+  if (password.length < 6) {
+    errors.push({
+      field: "password",
+      message: "Password must be at least 6 characters",
+    });
+  }
+
   return errors;
 }
 
