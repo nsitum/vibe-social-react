@@ -21,7 +21,7 @@ function ModifyAccountModal() {
   const [newPassword, setNewPassword] = useState("");
   const [formErrors, setFormErrors] = useState([]);
   const [isModifying, setIsModifying] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [touchedFields, setTouchedFields] = useState({});
   const navigate = useNavigate();
   const { setPosts } = useOutletContext();
 
@@ -43,42 +43,46 @@ function ModifyAccountModal() {
     setEmail(user.email);
   }, [user]);
 
-  useEffect(() => {
-    async function getAllUsers() {
-      try {
-        const res = await fetch(BASE_URL + "/users", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const data = await res.json();
-        setUsers(data);
-      } catch (err) {
-        toast.error(err.message);
-      }
+  function handleChange(fieldName, value) {
+    if (!touchedFields[fieldName]) {
+      setTouchedFields((prev) => ({ ...prev, [fieldName]: true }));
     }
 
-    getAllUsers();
-  }, []);
+    const updated = {
+      username,
+      email,
+      oldPassword,
+      newPassword,
+      [fieldName]: value,
+    };
+
+    const errors = validateModifyUser(updated);
+
+    setFormErrors(errors);
+  }
+
+  // async function validatePassword() {
+  //   try {
+  //     const res = await fetch();
+  //   } catch (err) {
+  //     toast.error(err.message);
+  //   }
+  // }
 
   async function handleModifyUser(e) {
     e.preventDefault();
     try {
-      setFormErrors([]);
       setIsModifying(true);
-      const formErrors = validateModifyUser({
-        username,
-        email,
-        oldPassword,
-        newPassword,
-        existingUsers: users,
-        currentUserId: user.id,
-      });
-      if (formErrors.length) {
-        setFormErrors(formErrors);
-        return;
-      }
+
+      // const errors = validateModifyUser({
+      //   oldPassword,
+      //   existingUsers: users,
+      //   currentUserId: user.id,
+      // });
+
+      // setFormErrors(errors);
+
+      if (formErrors.length) return;
 
       const res = await fetch(BASE_URL + "/users/me", {
         method: "PUT",
@@ -89,13 +93,16 @@ function ModifyAccountModal() {
         body: JSON.stringify({
           username,
           email,
+          oldPassword,
           ...(newPassword?.trim() && { password: newPassword }),
         }),
       });
-      if (!res.ok) throw new Error("Something went wrong");
+
       const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Something went wrong");
+
       // Ažuriraj i postove
-      await updateUserPosts({
+      updateUserPosts({
         userId: user.id,
         newUsername: username,
         setPosts,
@@ -128,11 +135,14 @@ function ModifyAccountModal() {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                handleChange("username", e.target.value);
+              }}
             />
             <p className={styles.error}>
               {
-                usernameError
+                usernameError && touchedFields.username
                   ? usernameError.message
                   : "\u00A0" /* &nbsp; fallback */
               }
@@ -144,10 +154,17 @@ function ModifyAccountModal() {
               id="email"
               type="text"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                handleChange("email", e.target.value);
+              }}
             />
             <p className={styles.error}>
-              {emailError ? emailError.message : "\u00A0" /* &nbsp; fallback */}
+              {
+                emailError && touchedFields.email
+                  ? emailError.message
+                  : "\u00A0" /* &nbsp; fallback */
+              }
             </p>
           </div>
           <div>
@@ -157,11 +174,14 @@ function ModifyAccountModal() {
               type="password"
               autoComplete="off"
               value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
+              onChange={(e) => {
+                setOldPassword(e.target.value);
+                handleChange("oldPassword", e.target.value);
+              }}
             />
             <p className={styles.error}>
               {
-                oldPasswordError
+                oldPasswordError && touchedFields.oldPassword
                   ? oldPasswordError.message
                   : "\u00A0" /* &nbsp; fallback */
               }
@@ -174,11 +194,14 @@ function ModifyAccountModal() {
               type="password"
               autoComplete="off"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                handleChange("newPassword", e.target.value);
+              }}
             />
             <p className={styles.error}>
               {
-                newPasswordError
+                newPasswordError && touchedFields.newPassword
                   ? newPasswordError.message
                   : "\u00A0" /* &nbsp; fallback */
               }

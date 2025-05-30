@@ -64,14 +64,7 @@ function validateRegister({
   return errors;
 }
 
-function validateModifyUser({
-  username,
-  email,
-  oldPassword,
-  newPassword,
-  existingUsers,
-  currentUserId,
-}) {
+function validateModifyUser({ username, email, oldPassword, newPassword }) {
   const errors = [];
 
   if (!username.trim()) {
@@ -81,22 +74,12 @@ function validateModifyUser({
       field: "username",
       message: "Username must be at least 3 characters.",
     });
-  } else if (
-    existingUsers?.some(
-      (u) => u.username === username && u.id !== currentUserId
-    )
-  ) {
-    errors.push({ field: "username", message: "Username already exists." });
   }
 
   if (!email.trim()) {
     errors.push({ field: "email", message: "Email is required." });
   } else if (!/.+@.+\..+/.test(email)) {
     errors.push({ field: "email", message: "Email format is invalid." });
-  } else if (
-    existingUsers?.some((u) => u.email === email && u.id !== currentUserId)
-  ) {
-    errors.push({ field: "email", message: "Email already exists." });
   }
 
   if (!oldPassword) {
